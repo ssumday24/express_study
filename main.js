@@ -1,3 +1,40 @@
+const express = require('express') //express 모듈로드
+const app = express()
+const port = 3000
+
+var fs = require('fs');
+var template = require('./lib/template.js');
+
+//pm2 start main.js --watch  : --watch 해야 자동반영
+//라우팅: 두번째 인자는 콜백함수
+// req: 클라->서버 요청정보.
+// res : 서버->클라 응답. response.send()
+app.get('/', (request, response) => {
+    fs.readdir('./data', function (error, filelist) {
+        var title = 'Welcome';
+        var description = 'Hello, Node.js123';
+        var list = template.list(filelist);
+        var html = template.HTML(title, list,
+            `<h2>${title}</h2>${description}`,
+            `<a href="/create">create</a>`
+        );
+        return response.send(html); //클라에 html 전송
+    });
+
+});
+
+
+app.get('/page/:pageId', (request, response) => {
+    response.send(request.params);
+});
+
+
+
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+});
+
+/*
 var http = require('http'); //http 모듈 불러오기 -nodejs 내장
 var fs = require('fs'); // 파일시스템 모듈
 var url = require('url'); // url모듈
@@ -147,3 +184,4 @@ var app = http.createServer(function (request, response) {
     }
 });
 app.listen(3000);
+*/
